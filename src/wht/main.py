@@ -63,7 +63,7 @@ def _search_and_select(query: str) -> Optional[parser.Snippet]:
             
     return None
 
-@app.command()
+@app.command("config")
 def config_app():
     """Set the GitHub Repository URL and default shell preference."""
     cfg = config.load_config()

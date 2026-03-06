@@ -8,7 +8,7 @@ REPO_DIR = CONFIG_DIR / "repo"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 
 DEFAULT_CONFIG = {
-    "repo_url": "",          # The GitHub repo containing the markdown snippets
+    "repo_url": "https://github.com/Sarin-jacob/wht-snippets.git",          # The GitHub repo containing the markdown snippets
     "default_shell": "bash", # 'bash', 'pwsh', or 'cmd'
     "usage_weights": {}      # Tracks execution frequency for search ranking
 }
@@ -30,7 +30,7 @@ def load_config() -> Dict[str, Any]:
     try:
         with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             config = json.load(f)
-            # Merge defaults to handle upgrades where new keys are added
+            # Merge defaults to handle upgrades where new keys are added - This is new format its soo cool
             return {**DEFAULT_CONFIG, **config}
     except json.JSONDecodeError:
         # If the file is somehow corrupted, fallback to default

@@ -25,7 +25,7 @@ def parse_file(filepath: Path) -> List[Snippet]:
         content = f.read()
 
     # Split the file by "## " to isolate individual snippets
-    chunks = re.split(r'^##\s+', content, flags=re.MULTILINE)
+    chunks = re.split(r'^##\s+', content, flags=re.MULTILINE) # this matches '## '
     snippets = []
 
     for chunk in chunks:
