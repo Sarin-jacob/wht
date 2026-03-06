@@ -167,7 +167,7 @@ def cli():
     import sys
     
     # The commands Typer should handle normally
-    known_commands = {"find", "sync", "config", "get", "--help", "-h"}
+    known_commands = {"find", "sync", "config", "get", "--help", "-h", "--show-completion", "--install-completion"}
     
     # If arguments were passed and the first argument isn't a known command...
     if len(sys.argv) > 1 and sys.argv[1] not in known_commands:
