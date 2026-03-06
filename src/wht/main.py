@@ -1,4 +1,5 @@
 import os
+import sys
 import secrets
 import subprocess
 from pathlib import Path
@@ -28,7 +29,7 @@ def _search_and_select(query: str) -> Optional[parser.Snippet]:
     all_snippets = parser.load_all_snippets()
     if not all_snippets:
         console.print("[red]No snippets found. Did you run `wht sync`?[/red]")
-        raise typer.Exit(1)
+        sys.exit(1)
 
     # 1. Fuzzy Search
     query_lower = query.lower()
@@ -36,7 +37,7 @@ def _search_and_select(query: str) -> Optional[parser.Snippet]:
 
     if not matches:
         console.print(f"[yellow]No snippets found matching '{query}'.[/yellow]")
-        raise typer.Exit(1)
+        sys.exit(1)
 
     # 2. Weight-based Ranking
     cfg = config.load_config()
@@ -54,7 +55,7 @@ def _search_and_select(query: str) -> Optional[parser.Snippet]:
     ).ask()
 
     if not selection_str:
-        raise typer.Exit() # User hit Ctrl+C
+        sys.exit(0) # User hit Ctrl+C
 
     # Find the original object based on the selection string
     for s in matches:
@@ -92,7 +93,7 @@ def sync():
     if git_sync.sync():
         console.print("[green]Successfully synced![/green]")
     else:
-        raise typer.Exit(1)
+        sys.exit(1)
 
 @app.command()
 def find(query: str):
@@ -114,7 +115,7 @@ def find(query: str):
         console.print(syntax)
         console.print()
 
-@app.command()
+@app.command() #will use globally 
 def get(query: str):
     """Interactive search; copies one-liner or runs Python file via uv."""
     snippet = _search_and_select(query)
@@ -161,6 +162,22 @@ def get(query: str):
         pyperclip.copy(oneliner)
         console.print(f"[green]Copied {lang} one-liner to clipboard![/green]")
         console.print(f"[dim]{oneliner}[/dim]")
+def cli():
+    """Custom entry point to allow 'wht <query>' to act as the default command."""
+    import sys
+    
+    # The commands Typer should handle normally
+    known_commands = {"find", "sync", "config", "get", "--help", "-h"}
+    
+    # If arguments were passed and the first argument isn't a known command...
+    if len(sys.argv) > 1 and sys.argv[1] not in known_commands:
+        # Join everything typed after 'wht' into a single query string
+        # This allows you to type 'wht port kill' without quotes!
+        query = " ".join(sys.argv[1:])
+        get(query)
+    else:
+        # Otherwise, let Typer handle it (for find, sync, config, etc.)
+        app()
 
 if __name__ == "__main__":
-    app()
+    cli()
